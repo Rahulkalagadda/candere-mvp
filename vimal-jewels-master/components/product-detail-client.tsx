@@ -30,6 +30,15 @@ import {
 } from "@/components/ui/accordion";
 import { Separator } from "@/components/ui/separator";
 import CandereProductDetails from "@/components/candere-product-details";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -439,8 +448,103 @@ export default function ProductDetailClient({ id }: { id: string }) {
           </Link>
 
           <div className="flex gap-4 mt-4">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button className="bg-[#009999] text-white hover:bg-[#007a7a] px-8 py-3 rounded-md font-semibold">
+                  CUSTOMIZE
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="sm:max-w-md">
+                <SheetHeader>
+                  <SheetTitle className="text-lg">Sizing & Selection</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-6 p-4">
+                  {/* Pick your Metal */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Pick your Metal
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {metalOptions.map((opt) => {
+                        const active = selectedMetal === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => setSelectedMetal(opt.id)}
+                            aria-pressed={active}
+                            className={`w-full rounded-xl border p-3 text-center transition-colors ${
+                              active
+                                ? "border-[#009999] ring-1 ring-[#009999]"
+                                : "border-gray-200 hover:border-gray-300"
+                            }`}
+                            style={{ background: getMetalGradient(opt.tone as string) }}
+                          >
+                            <div className="text-sm font-semibold text-gray-900">{opt.title}</div>
+                            <div className="text-xs text-gray-600">{opt.subtitle}</div>
+                            <div
+                              className={`mt-2 inline-block rounded px-2 py-0.5 text-[11px] ${
+                                active ? "bg-white text-[#007a7a]" : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              Made to Order
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Pick your Diamond Quality */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Pick your Diamond Quality
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {diamondOptions.map((opt) => {
+                        const active = selectedDiamond === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            type="button"
+                            onClick={() => setSelectedDiamond(opt.id)}
+                            aria-pressed={active}
+                            className={`w-full rounded-xl border p-4 text-center transition-colors ${
+                              active
+                                ? "border-[#009999] ring-1 ring-[#009999]"
+                                : "border-gray-200 hover:border-gray-300"
+                            }`}
+                            style={{
+                              background: "linear-gradient(180deg, #c7edf2 0%, #8fd6df 100%)",
+                            }}
+                          >
+                            <div className="text-sm font-semibold text-gray-900">{opt.title}</div>
+                            <div
+                              className={`mt-2 inline-block rounded px-2 py-0.5 text-[11px] ${
+                                active ? "bg-white text-[#007a7a]" : "bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              Made to Order
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+                <SheetFooter>
+                  <SheetClose asChild>
+                    <Button className="w-full bg-[#009999] text-white hover:bg-[#007a7a]">
+                      CONFIRM SELECTION
+                    </Button>
+                  </SheetClose>
+                </SheetFooter>
+              </SheetContent>
+            </Sheet>
+
             <Button
-              className="bg-[#009999] text-white hover:bg-[#007a7a] px-8 py-3 rounded-md font-semibold"
+              variant="outline"
+              className="border-[#009999] text-[#009999] hover:bg-[#e0f2f2] bg-transparent px-8 py-3 rounded-md font-semibold"
               onClick={handleBuyNow}
             >
               BUY NOW
@@ -471,95 +575,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
 
           <Separator className="my-4" />
 
-          {/* Sizing & Selection */}
-          <h2 className="text-xl font-bold text-gray-900 relative pb-2">
-            Sizing & Selection
-            <span className="absolute bottom-0 left-0 w-1/4 h-0.5 bg-[#009999]"></span>
-          </h2>
-          <div className="flex flex-col gap-6">
-            {/* Pick your Metal */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Pick your Metal
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {metalOptions.map((opt) => {
-                  const active = selectedMetal === opt.id;
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => setSelectedMetal(opt.id)}
-                      aria-pressed={active}
-                      className={`w-full rounded-xl border p-3 text-center transition-colors ${
-                        active
-                          ? "border-[#009999] ring-1 ring-[#009999]"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      style={{
-                        background: getMetalGradient(opt.tone as string),
-                      }}
-                    >
-                      <div className="text-sm font-semibold text-gray-900">
-                        {opt.title}
-                      </div>
-                      <div className="text-xs text-gray-600">{opt.subtitle}</div>
-                      <div
-                        className={`mt-2 inline-block rounded px-2 py-0.5 text-[11px] ${
-                          active ? "bg-white text-[#007a7a]" : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        Made to Order
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Pick your Diamond Quality */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Pick your Diamond Quality
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {diamondOptions.map((opt) => {
-                  const active = selectedDiamond === opt.id;
-                  return (
-                    <button
-                      key={opt.id}
-                      type="button"
-                      onClick={() => setSelectedDiamond(opt.id)}
-                      aria-pressed={active}
-                      className={`w-full rounded-xl border p-4 text-center transition-colors ${
-                        active
-                          ? "border-[#009999] ring-1 ring-[#009999]"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      style={{
-                        background: "linear-gradient(180deg, #c7edf2 0%, #8fd6df 100%)",
-                      }}
-                    >
-                      <div className="text-sm font-semibold text-gray-900">
-                        {opt.title}
-                      </div>
-                      <div
-                        className={`mt-2 inline-block rounded px-2 py-0.5 text-[11px] ${
-                          active ? "bg-white text-[#007a7a]" : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        Made to Order
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <Button className="w-full bg-[#009999] text-white hover:bg-[#007a7a]">
-              CONFIRM SELECTION
-            </Button>
-          </div>
+          {/* Sizing & Selection moved to the right sidebar (use the Customize button above) */}
 
           {/* Virtual Try On */}
           <div className="bg-gray-100 p-4 rounded-lg flex items-center justify-between">
