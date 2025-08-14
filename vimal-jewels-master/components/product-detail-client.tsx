@@ -23,13 +23,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -275,6 +268,37 @@ export default function ProductDetailClient({ id }: { id: string }) {
   const [selectedImage, setSelectedImage] = useState(product.images[0].src);
   const dispatch = useDispatch();
 
+  // Customization options
+  const metalOptions = [
+    { id: "18k-yellow-gold", title: "18K", subtitle: "Yellow Gold", tone: "gold" },
+    { id: "14k-yellow-gold", title: "14K", subtitle: "Yellow Gold", tone: "gold" },
+    { id: "18k-rose-gold", title: "18K", subtitle: "Rose Gold", tone: "bronze" },
+    { id: "14k-rose-gold", title: "14K", subtitle: "Rose Gold", tone: "bronze" },
+  ];
+  const diamondOptions = [
+    { id: "si-ij", title: "SI IJ", tone: "diamond" },
+    { id: "si-gh", title: "SI GH", tone: "diamond" },
+  ];
+  const [selectedMetal, setSelectedMetal] = useState(metalOptions[0].id);
+  const [selectedDiamond, setSelectedDiamond] = useState(diamondOptions[0].id);
+
+  const getMetalLabel = (id: string) => {
+    const m = metalOptions.find((x) => x.id === id);
+    return m ? `${m.title} ${m.subtitle}` : "";
+  };
+  const getDiamondLabel = (id: string) => {
+    const d = diamondOptions.find((x) => x.id === id);
+    return d ? d.title : "";
+  };
+
+  const getMetalGradient = (tone: string) => {
+    if (tone === "gold") {
+      return "linear-gradient(180deg, #fff1a6 0%, #f8d56b 100%)";
+    }
+    // bronze / rose gold
+    return "linear-gradient(180deg, #fbd0c4 0%, #f6a798 100%)";
+  };
+
   const handleAddToCart = () => {
     dispatch(
       addToCart({
@@ -283,7 +307,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
         price: Number.parseFloat(product.currentPrice.replace(/,/g, "")),
         quantity: 1,
         image: product.images[0].src,
-        metal: "14K Yellow Gold (1.51g)", // Mock metal detail
+        metal: `${getMetalLabel(selectedMetal)} | ${getDiamondLabel(selectedDiamond)}`,
       })
     );
     alert("Added to cart!");
@@ -297,7 +321,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
         price: Number.parseFloat(product.currentPrice.replace(/,/g, "")),
         quantity: 1,
         image: product.images[0].src,
-        metal: "14K Yellow Gold (1.51g)", // Mock metal detail
+        metal: `${getMetalLabel(selectedMetal)} | ${getDiamondLabel(selectedDiamond)}`,
       })
     );
     router.push("/checkout");
@@ -452,31 +476,89 @@ export default function ProductDetailClient({ id }: { id: string }) {
             Sizing & Selection
             <span className="absolute bottom-0 left-0 w-1/4 h-0.5 bg-[#009999]"></span>
           </h2>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-6">
+            {/* Pick your Metal */}
             <div>
-              <label
-                htmlFor="customization"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Customization
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Pick your Metal
               </label>
-              <Select defaultValue="14k-yellow-gold">
-                <SelectTrigger className="w-full rounded-md border border-gray-300 bg-white">
-                  <SelectValue placeholder="14k Yellow Gold - In Stock" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="14k-yellow-gold">
-                    14k Yellow Gold - In Stock
-                  </SelectItem>
-                  <SelectItem value="18k-yellow-gold">
-                    18k Yellow Gold - In Stock
-                  </SelectItem>
-                  <SelectItem value="22k-yellow-gold">
-                    22k Yellow Gold - In Stock
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {metalOptions.map((opt) => {
+                  const active = selectedMetal === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setSelectedMetal(opt.id)}
+                      aria-pressed={active}
+                      className={`w-full rounded-xl border p-3 text-center transition-colors ${
+                        active
+                          ? "border-[#009999] ring-1 ring-[#009999]"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      style={{
+                        background: getMetalGradient(opt.tone as string),
+                      }}
+                    >
+                      <div className="text-sm font-semibold text-gray-900">
+                        {opt.title}
+                      </div>
+                      <div className="text-xs text-gray-600">{opt.subtitle}</div>
+                      <div
+                        className={`mt-2 inline-block rounded px-2 py-0.5 text-[11px] ${
+                          active ? "bg-white text-[#007a7a]" : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        Made to Order
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
+
+            {/* Pick your Diamond Quality */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Pick your Diamond Quality
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {diamondOptions.map((opt) => {
+                  const active = selectedDiamond === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setSelectedDiamond(opt.id)}
+                      aria-pressed={active}
+                      className={`w-full rounded-xl border p-4 text-center transition-colors ${
+                        active
+                          ? "border-[#009999] ring-1 ring-[#009999]"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      style={{
+                        background: "linear-gradient(180deg, #c7edf2 0%, #8fd6df 100%)",
+                      }}
+                    >
+                      <div className="text-sm font-semibold text-gray-900">
+                        {opt.title}
+                      </div>
+                      <div
+                        className={`mt-2 inline-block rounded px-2 py-0.5 text-[11px] ${
+                          active ? "bg-white text-[#007a7a]" : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        Made to Order
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <Button className="w-full bg-[#009999] text-white hover:bg-[#007a7a]">
+              CONFIRM SELECTION
+            </Button>
           </div>
 
           {/* Virtual Try On */}
